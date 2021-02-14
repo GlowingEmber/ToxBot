@@ -17,15 +17,22 @@ client.on('ready', () => {
 // Create an event listener for messages
 client.on('message', message => {
     meanmessage = message.content.split("?")
-  if (meanmessage[0] === 'toxic') {
+  if (meanmessage[0].toLowerCase() === 'toxic') {
     toxicity.load(threshold).then(model => {
         model.classify(meanmessage[1]).then(predictions => {
       
+          var toxicityTypes = "`Warning!` This message was perceived as offensive for the following reasons: "
           for(i=0; i < predictions.length; i++){
-              if(predictions[i].results[0].match === true || predictions[i].results[0].match === null){
-                  message.channel.send(predictions[i].label)
+            if(predictions[i].results[0].match === true || predictions[i].results[0].match === null){
+              if (i == predictions.length - 1){
+                  toxicityTypes += "`" + predictions[i].label + "`"
+              }
+              else {
+                toxicityTypes += "`" + predictions[i].label + "`, "
+              }
               }
           }
+          message.channel.send(toxicityTypes)
         });
       });
   }
