@@ -23,12 +23,37 @@ client.on('message', message => {
       
           var toxicityTypes = "`Warning!` This message was perceived as offensive for the following reasons: "
           for(i=0; i < predictions.length; i++){
+            var appendedType
             if(predictions[i].results[0].match === true || predictions[i].results[0].match === null){
+              switch(predictions[i].label){
+                case "identity_attack": 
+                  appendedType = "Attacking Identity"
+                  break;
+                case "insult":
+                  appendedType = "Insulting"
+                  break;
+                case "obscene":
+                  appendedType = "Obscene"
+                  break;
+                case "severe_toxicity":
+                  appendedType = "Harassing"
+                  break;
+                case "sexual_explicit":
+                  appendedType = "Sexually Explicit"
+                  break;
+                case "threat":
+                  appendedType = "Threatening"
+                  break;
+                case "toxicity":
+                  appendedType = "Toxic"
+                  break;
+
+              }
               if (i == predictions.length - 1){
-                  toxicityTypes += "`" + predictions[i].label + "`"
+                  toxicityTypes += "`" + appendedType + "`"
               }
               else {
-                toxicityTypes += "`" + predictions[i].label + "`, "
+                toxicityTypes += "`" + appendedType + "`, "
               }
               }
           }
