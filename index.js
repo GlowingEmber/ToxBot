@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const toxicity = require('@tensorflow-models/toxicity');
 require('@tensorflow/tfjs');
+require('dotenv').config()
 
 
 
@@ -30,4 +31,4 @@ client.on('message', message => {
   }
 });
 
-client.login('ODEwNDEyNTg3NTk3NjkyOTM4.YCjRiQ.z_TPB_ZoqsgaOIbw5th8zGt2gk8');
+client.login(process.env.token);
