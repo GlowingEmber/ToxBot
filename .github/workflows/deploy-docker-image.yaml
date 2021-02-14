@@ -21,6 +21,6 @@ jobs:
       - name: Login to Docker
         run: docker login --username=henrymarks --password=Henrymarks0429
       - name: Build Image
-        run: docker build -t $henrymarks/tox-bot:$autodeploy .
+        run: docker build -t $henrymarks/tox-bot:autodeploy .
       - name: Push Image
         run: docker push henrymarks/tox-bot:autodeploy
