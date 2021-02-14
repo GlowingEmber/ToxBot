@@ -31,48 +31,61 @@ client.on('message', message => {
     toxicity.load(threshold).then(model => {
         model.classify(lastMessage).then(predictions => {
       
-          var toxicityTypes = ""
+          var toxicityTypes = []
           for(i=0; i < predictions.length; i++){
-            var appendedType
+            var appendedType = ""
             if(predictions[i].results[0].match === true || predictions[i].results[0].match === null){
               switch(predictions[i].label){
                 case "identity_attack": 
-                  appendedType = "Attacking Identity"
+                  toxicityTypes.push("Attacking Identity")
                   break;
                 case "insult":
-                  appendedType = "Insulting"
+                  toxicityTypes.push("Insulting")
                   break;
                 case "obscene":
-                  appendedType = "Obscene"
+                  toxicityTypes.push("Obscene")
                   break;
                 case "severe_toxicity":
-                  appendedType = "Harassing"
+                  toxicityTypes.push("Harassing")
                   break;
                 case "sexual_explicit":
-                  appendedType = "Sexually Explicit"
+                  toxicityTypes.push("Sexually Explicit")
                   break;
                 case "threat":
-                  appendedType = "Threatening"
+                  toxicityTypes.push("Threatening")
                   break;
                 case "toxicity":
-                  appendedType = "Toxic"
+                  toxicityTypes.push("Toxic")
                   break;
 
               }
-              if (i == predictions.length - 1){
-                  toxicityTypes += "and `" + appendedType + "`"
+              }
+          }
+          const x = toxicityTypes.length
+          switch(true) {
+            case (x == 0):
+            message.channel.send("The message `" + lastMessage + "` was not perceived as offensive by the AI.")
+            break;
+            case (x == 1):
+            message.channel.send("The message `" + lastMessage + "` was perceived as offensive for being `" + toxicityTypes[0] + "`")
+            break;
+            case (x == 2):
+            message.channel.send("The message `" + lastMessage + "` was perceived as offensive for being `" + toxicityTypes[0] + "` and/or `" + toxicityTypes[1] + "`")
+            break;
+            case (x >= 3):
+            for (i = 0; i < x; i++) {
+              console.log(i)
+              console.log(toxicityTypes.length)
+              if (i == toxicityTypes.length - 1) {
+                appendedType += " and/or `" + toxicityTypes[i] + "`"
               }
               else {
-                toxicityTypes += "`" + appendedType + "`, "
+                appendedType += "`" + toxicityTypes[i] + "`, "
               }
-              }
+            }
+            message.channel.send("`Warning!` The message `" + lastMessage + "` was perceived as offensive for being " + appendedType)
           }
-          if (toxicityTypes != "") {
-          message.channel.send("`Warning!` This message was perceived as offensive for the following reasons: " + toxicityTypes)
-          }
-          else {
-          message.channel.send("The message was not perceived as offensive by the AI.")
-          }
+    
         });
       });
   }
