@@ -15,6 +15,7 @@ client.on('ready', () => {
 });
 
 var lastMessage = ""
+analysis = ""
 // Create an event listener for messages
 client.on('message', message => {
   
@@ -25,6 +26,7 @@ client.on('message', message => {
 //     .catch(console.error);
   if (message.content.toLowerCase() === 'toxic?') {
     message.channel.messages.fetch({ limit: 2 }).then(messages => {
+    lastAuthor = messages.last().author
     lastMessage = messages.last().content
 
   })
@@ -64,18 +66,16 @@ client.on('message', message => {
           const x = toxicityTypes.length
           switch(true) {
             case (x == 0):
-            message.channel.send("The message `" + lastMessage + "` was not perceived as offensive by the AI.")
+            analysis = ("The message `" + lastMessage + "` was not perceived as offensive by the AI.")
             break;
             case (x == 1):
-            message.channel.send("The message `" + lastMessage + "` was perceived as offensive for being `" + toxicityTypes[0] + "`")
+            analysis = ("The message `" + lastMessage + "` was perceived as offensive for being `" + toxicityTypes[0] + "`")
             break;
             case (x == 2):
-            message.channel.send("The message `" + lastMessage + "` was perceived as offensive for being `" + toxicityTypes[0] + "` and/or `" + toxicityTypes[1] + "`")
+            analysis = ("The message `" + lastMessage + "` was perceived as offensive for being `" + toxicityTypes[0] + "` and/or `" + toxicityTypes[1] + "`")
             break;
             case (x >= 3):
             for (i = 0; i < x; i++) {
-              console.log(i)
-              console.log(toxicityTypes.length)
               if (i == toxicityTypes.length - 1) {
                 appendedType += " and/or `" + toxicityTypes[i] + "`"
               }
@@ -83,9 +83,20 @@ client.on('message', message => {
                 appendedType += "`" + toxicityTypes[i] + "`, "
               }
             }
-            message.channel.send("`Warning!` The message `" + lastMessage + "` was perceived as offensive for being " + appendedType)
+            analysis = ("`Warning!` The message `" + lastMessage + "` was perceived as offensive for being " + appendedType)
+            break;
           }
-    
+          const exampleEmbed = new Discord.MessageEmbed()
+	            .setColor('#7075ff')
+            	.setAuthor(lastAuthor.tag)
+            	.setThumbnail('https://i.imgur.com/wSTFkRM.png')
+            	.addFields(
+          	  	{ name: 'Message', value: lastMessage },
+	           	{ name: 'Analysis', value: analysis},
+              	)
+            	.setTimestamp()
+            	.setFooter('ToxBot');
+            message.channel.send(exampleEmbed);
         });
       });
   }
