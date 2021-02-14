@@ -31,7 +31,7 @@ client.on('message', message => {
     toxicity.load(threshold).then(model => {
         model.classify(lastMessage).then(predictions => {
       
-          var toxicityTypes = "`Warning!` This message was perceived as offensive for the following reasons: "
+          var toxicityTypes = ""
           for(i=0; i < predictions.length; i++){
             var appendedType
             if(predictions[i].results[0].match === true || predictions[i].results[0].match === null){
@@ -67,7 +67,12 @@ client.on('message', message => {
               }
               }
           }
-          message.channel.send(toxicityTypes)
+          if (toxicityTypes != "") {
+          message.channel.send("`Warning!` This message was perceived as offensive for the following reasons: " + toxicityTypes)
+          }
+          else {
+          message.channel.send("The message was not perceived as offensive by the AI.")
+          }
         });
       });
   }
