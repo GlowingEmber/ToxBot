@@ -1,9 +1,9 @@
 name: AUTO DEPLOY CONTAINER
 
-env:
-   DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
-   USERNAME: yourhubusername
-   REPOSITORY_NAME: yourrepositoryname
+# env:
+#    DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+#    USERNAME: yourhubusername
+#    REPOSITORY_NAME: yourrepositoryname
 
 on:
   push:
@@ -19,8 +19,8 @@ jobs:
       - name: Install Docker
         uses: docker/setup-buildx-action@v1
       - name: Login to Docker
-        run: docker login --username=yourhubusername --password=$DOCKER_HUB_PASSWORD
+        run: docker login --username=henrymarks --password=Henrymarks0429
       - name: Build Image
-        run: docker build -t $USERNAME/$REPOSITORY_NAME:$IMAGE_TAG .
+        run: docker build -t henrymarks/tox-bot:autodeploy .
       - name: Push Image
-        run: docker push $USERNAME/$REPOSITORY_NAME:$IMAGE_TAG
+        run: docker push henrymarks/tox-bot:autodeploy
