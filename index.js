@@ -39,7 +39,7 @@ client.on('message', message => {
             if(predictions[i].results[0].match === true || predictions[i].results[0].match === null){
               switch(predictions[i].label){
                 case "identity_attack": 
-                  toxicityTypes.push("Attacking Identity")
+                  toxicityTypes.push("an Identity Attack")
                   break;
                 case "insult":
                   toxicityTypes.push("Insulting")
@@ -89,7 +89,7 @@ client.on('message', message => {
           const exampleEmbed = new Discord.MessageEmbed()
 	            .setColor('#7075ff')
             	.setAuthor(lastAuthor.tag)
-            	.setThumbnail('https://i.imgur.com/wSTFkRM.png')
+            	//.setThumbnail('https://i.imgur.com/wSTFkRM.png')
             	.addFields(
           	  	{ name: 'Message', value: lastMessage },
 	           	{ name: 'Analysis', value: analysis},
