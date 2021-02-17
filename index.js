@@ -37,13 +37,23 @@ client.on('message', message => {
             	.setFooter('ToxBot');
             message.channel.send(exampleEmbed);
   }
-  if (message.content.toLowerCase() === '?toxic previous') {
+  else if (message.content.toLowerCase() === '?toxic previous') {
     message.channel.messages.fetch({ limit: 2 }).then(messages => {
     lastAuthor = messages.last().author
     lastMessage = messages.last().content
 
   })
     toxicity.load(threshold).then(model => {
+        if (lastMessage == "") {
+          const exampleEmbed = new Discord.MessageEmbed()
+          .setColor('#7075ff')
+          .setAuthor(lastAuthor.tag)
+          .setDescription("Message was empty, an embed, or a file.")
+          .setTimestamp()
+          .setFooter('ToxBot');
+        message.channel.send(exampleEmbed);
+        }
+        else {
         model.classify(lastMessage).then(predictions => {
       
           var toxicityTypes = []
@@ -110,6 +120,7 @@ client.on('message', message => {
             	.setFooter('ToxBot');
             message.channel.send(exampleEmbed);
         });
+      }
       });
   }
 });
