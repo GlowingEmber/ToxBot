@@ -1,7 +1,7 @@
-const Discord = require('discord.js');
-const toxicity = require('@tensorflow-models/toxicity');
 require('@tensorflow/tfjs');
 require('dotenv').config()
+const Discord = require('discord.js');
+const toxicity = require('@tensorflow-models/toxicity');
 
 
 
@@ -12,7 +12,9 @@ const threshold = 0.9;
 
 client.on('ready', () => {
   console.log('I am ready!');
+  client.user.setActivity('?toxic help')
 });
+
 
 var lastMessage = ""
 analysis = ""
@@ -24,7 +26,18 @@ client.on('message', message => {
   // message.channel.messages.fetch({ limit: 10 })
 //     .then(messages => console.log(`Received ${messages.cache[0]} messages`))
 //     .catch(console.error);
-  if (message.content.toLowerCase() === 'toxic?') {
+  if (message.content.toLowerCase() === '?toxic help') {
+    const exampleEmbed = new Discord.MessageEmbed()
+	            .setColor('#7075ff')
+            	.addFields(
+          	  { name: 'Check Previous', value: "`?toxic previous`", inline: true },
+	           	{ name: 'Check Current', value: '`?toxic "message"`', inline: true},
+              { name: 'Add ToxBot', value: "[Add to Server](https://discord.com/api/oauth2/authorize?client_id=810413375737036800&permissions=117824&scope=bot)", inline: true})
+            	.setTimestamp()
+            	.setFooter('ToxBot');
+            message.channel.send(exampleEmbed);
+  }
+  if (message.content.toLowerCase() === '?toxic previous') {
     message.channel.messages.fetch({ limit: 2 }).then(messages => {
     lastAuthor = messages.last().author
     lastMessage = messages.last().content
@@ -89,7 +102,6 @@ client.on('message', message => {
           const exampleEmbed = new Discord.MessageEmbed()
 	            .setColor('#7075ff')
             	.setAuthor(lastAuthor.tag)
-            	//.setThumbnail('https://i.imgur.com/wSTFkRM.png')
             	.addFields(
           	  	{ name: 'Message', value: lastMessage },
 	           	{ name: 'Analysis', value: analysis},
