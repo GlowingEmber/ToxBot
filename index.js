@@ -3,31 +3,20 @@ require('dotenv').config()
 const Discord = require('discord.js');
 const toxicity = require('@tensorflow-models/toxicity');
 
-
-
 // Create an instance of a Discord client
 const client = new Discord.Client();
 const threshold = 0.9;
-
 
 client.on('ready', () => {
   console.log('I am ready!');
   client.user.setActivity('?toxic help')
 });
 
-
 var lastMessage = ""
 analysis = ""
-// Create an event listener for messages
 client.on('message', message => {
-  
-      // do what you need with lastMessage below
-    
-  // message.channel.messages.fetch({ limit: 10 })
-//     .then(messages => console.log(`Received ${messages.cache[0]} messages`))
-//     .catch(console.error);
   if (message.content.toLowerCase() === '?toxic help') {
-    const exampleEmbed = new Discord.MessageEmbed()
+    const responseEmbed = new Discord.MessageEmbed()
 	            .setColor('#7075ff')
             	.addFields(
           	  { name: 'Check Previous', value: "`?toxic previous`", inline: true },
@@ -35,23 +24,24 @@ client.on('message', message => {
               { name: 'Add ToxBot', value: "[Add to Server](https://discord.com/api/oauth2/authorize?client_id=810413375737036800&permissions=117824&scope=bot)", inline: true})
             	.setTimestamp()
             	.setFooter('ToxBot');
-            message.channel.send(exampleEmbed);
+            message.channel.send(responseEmbed);
   }
   else if (message.content.toLowerCase() === '?toxic previous') {
     message.channel.messages.fetch({ limit: 2 }).then(messages => {
     lastAuthor = messages.last().author
-    lastMessage = messages.last().content
+    lastMessage = messages.last().content.replace(/`/g,'')
+    .catch(console.error);
 
   })
     toxicity.load(threshold).then(model => {
         if (lastMessage == "") {
-          const exampleEmbed = new Discord.MessageEmbed()
+          const responseEmbed = new Discord.MessageEmbed()
           .setColor('#7075ff')
           .setAuthor(lastAuthor.tag)
           .setDescription("Message was empty, an embed, or a file.")
           .setTimestamp()
           .setFooter('ToxBot');
-        message.channel.send(exampleEmbed);
+        message.channel.send(responseEmbed);
         }
         else {
         model.classify(lastMessage).then(predictions => {
@@ -109,7 +99,7 @@ client.on('message', message => {
             analysis = ("`Warning!` The message `" + lastMessage + "` was perceived as offensive for being " + appendedType)
             break;
           }
-          const exampleEmbed = new Discord.MessageEmbed()
+          const responseEmbed = new Discord.MessageEmbed()
 	            .setColor('#7075ff')
             	.setAuthor(lastAuthor.tag)
             	.addFields(
@@ -118,7 +108,7 @@ client.on('message', message => {
               	)
             	.setTimestamp()
             	.setFooter('ToxBot');
-            message.channel.send(exampleEmbed);
+            message.channel.send(responseEmbed);
         });
       }
       });
