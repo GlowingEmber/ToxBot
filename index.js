@@ -15,8 +15,7 @@ client.on('ready', () => {
 var lastMessage = ""
 analysis = ""
 client.on('message', message => {
-  if (message.content.substring(0, 6).toLowerCase() === '?toxic') {
-    if (message.content.substring(6, 11).toLowerCase() === " help") {
+    if (message.content.toLowerCase().match(/^(\?toxic help)$/)) {
     const responseEmbed = new Discord.MessageEmbed()
 	            .setColor('#7075ff')
             	.addFields(
@@ -27,17 +26,31 @@ client.on('message', message => {
             	.setFooter('ToxBot');
             message.channel.send(responseEmbed);
   }
-  else if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/) || (message.content.match(/"/g)||[]).length === 2) {
+  else if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/) || (message.content.match(/"/g)||[]).length > 0) {
     if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/)) {
       message.channel.messages.fetch({ limit: 2 }).then(messages => {
     lastAuthor = messages.last().author
     lastMessage = messages.last().content.replace(/`/g,'')
   })
 }
-    else if ((message.content.match(/"/g)||[]).length === 2) {
+    else if ((message.content.match(/"/g)||[]).length >0) {
+      if ((message.content.match(/"/g)||[]).length === 2) {
       lastAuthor = message.author
       lastMessage = message.content.match(/"([^"]+)"/)[1].replace(/`/g,'')
+    } else {
+      const responseEmbed = new Discord.MessageEmbed()
+      .setColor('#7075ff')
+      .setAuthor(message.author.tag)
+      .setDescription("`Error:` " +  (message.content.match(/"/g)||[]).length + " quotation marks used, not 2.")
+      .addFields(
+        { name: 'Usage', value: "`?toxic \"message\"`"})
+      .setTimestamp()
+      .setFooter('ToxBot');
+    message.channel.send(responseEmbed);
+    return;
     }
+  }
+
     toxicity.load(threshold).then(model => {
         if (lastMessage == "") {
           const responseEmbed = new Discord.MessageEmbed()
@@ -118,7 +131,6 @@ client.on('message', message => {
       }
       });
   }
-}
 });
 
 client.login(process.env.token);
