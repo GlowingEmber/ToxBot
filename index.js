@@ -26,14 +26,14 @@ client.on('message', message => {
             	.setFooter('ToxBot');
             message.channel.send(responseEmbed);
   }
-  else if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/) || (message.content.match(/"/g)||[]).length > 0) {
+  else if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/) || (message.content.substr(0,6) === '?toxic' && (message.content.match(/"/g)||[]).length > 0)) {
     if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/)) {
       message.channel.messages.fetch({ limit: 2 }).then(messages => {
     lastAuthor = messages.last().author
     lastMessage = messages.last().content.replace(/`/g,'')
   })
 }
-    else if ((message.content.match(/"/g)||[]).length >0) {
+    else if ((message.content.substr(0,6) === '?toxic' && message.content.match(/"/g)||[]).length > 0) {
       if ((message.content.match(/"/g)||[]).length === 2) {
       lastAuthor = message.author
       lastMessage = message.content.match(/"([^"]+)"/)[1].replace(/`/g,'')
