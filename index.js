@@ -15,7 +15,8 @@ client.on('ready', () => {
 var lastMessage = ""
 analysis = ""
 client.on('message', message => {
-  if (message.content.toLowerCase() === '?toxic help') {
+  if (message.content.substring(0, 6).toLowerCase() === '?toxic') {
+    if (message.content.substring(6, 11).toLowerCase() === " help") {
     const responseEmbed = new Discord.MessageEmbed()
 	            .setColor('#7075ff')
             	.addFields(
@@ -26,13 +27,17 @@ client.on('message', message => {
             	.setFooter('ToxBot');
             message.channel.send(responseEmbed);
   }
-  else if (message.content.toLowerCase() === '?toxic previous') {
-    message.channel.messages.fetch({ limit: 2 }).then(messages => {
+  else if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/) || (message.content.match(/"/g)||[]).length === 2) {
+    if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/)) {
+      message.channel.messages.fetch({ limit: 2 }).then(messages => {
     lastAuthor = messages.last().author
     lastMessage = messages.last().content.replace(/`/g,'')
-    .catch(console.error);
-
   })
+}
+    else if ((message.content.match(/"/g)||[]).length === 2) {
+      lastAuthor = message.author
+      lastMessage = message.content.match(/"([^"]+)"/)[1].replace(/`/g,'')
+    }
     toxicity.load(threshold).then(model => {
         if (lastMessage == "") {
           const responseEmbed = new Discord.MessageEmbed()
@@ -113,6 +118,7 @@ client.on('message', message => {
       }
       });
   }
+}
 });
 
 client.login(process.env.token);
