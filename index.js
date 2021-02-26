@@ -14,7 +14,10 @@ client.on('ready', () => {
 
 var lastMessage = ""
 analysis = ""
+var messagesList = [];
+var messagesAuthors = [];
 client.on('message', message => {
+    if(message.author.bot) return; 
     if (message.content.toLowerCase().match(/^(\?toxic help)$/)) {
     const responseEmbed = new Discord.MessageEmbed()
 	            .setColor('#7075ff')
@@ -29,8 +32,8 @@ client.on('message', message => {
   else if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/) || (message.content.substr(0,6) === '?toxic' && (message.content.match(/"/g)||[]).length > 0)) {
     if (message.content.toLowerCase().match(/^(\?toxic previous|\?toxic prev|\?toxic p)$/)) {
       message.channel.messages.fetch({ limit: 2 }).then(messages => {
-    lastAuthor = messages.last().author
-    lastMessage = messages.last().content.replace(/`/g,'')
+    lastMessage = messagesList[messagesList.length - 2].replace(/`/g,'')
+    lastAuthor = messagesAuthors[messagesAuthors.length - 2]
   })
 }
     else if ((message.content.substr(0,6) === '?toxic' && message.content.match(/"/g)||[]).length > 0) {
@@ -131,6 +134,8 @@ client.on('message', message => {
       }
       });
   }
+  messagesList.push(message.content)
+  messagesAuthors.push(message.author)
 });
 
 client.login(process.env.token);
